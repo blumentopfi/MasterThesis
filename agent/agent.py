@@ -1,4 +1,7 @@
+from typing import List
+
 from agent.brain import Brain, RandomBrain
+from agent.needs import FulfilledNeed
 from agent.resourcechange import ResourceChange, Resource, Water, Food
 import names
 
@@ -7,10 +10,14 @@ class Resident:
 
     def __init__(self, brain: Brain):
         self.resources = {}
+        self.fulfilled_needs: List[FulfilledNeed] = []
         self.sheltered = False
         self.brain = brain
         self.location = None
         self.name = names.get_first_name()
+
+    def fulfill_need(self, fulfilled_need : FulfilledNeed):
+        self.fulfilled_needs.append(fulfilled_need)
 
     def __has_sufficient_resources(self, resource: Resource, min_amount: int) -> bool:
         if resource not in self.resources:
@@ -25,12 +32,15 @@ class Resident:
 
     def calculate_performance(self):
         score = 0
-        if self.sheltered:
-            score += 20
+        for fulfilled_need in self.fulfilled_needs:
+            score += fulfilled_need.get_score()
+
         if not self.is_thirsty():
             score += 50
         if not self.is_hungry():
             score += 30
+
+        self.fulfilled_needs.clear()
         return score
 
     def step(self, state):

@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from agent.needs import Shelter
 from agent.resourcechange import Resource, ResourceChange, Water, Food
 
 
@@ -8,7 +9,6 @@ class PointOfInterest:
     def __init__(self, capacity):
         self.capacity = capacity
         self.residents_at_location = {}
-        pass
 
     @abstractmethod
     def step(self):
@@ -26,13 +26,14 @@ class Home(PointOfInterest):
 
     def step(self):
         residents_to_delete = []
+
         for owner in self.owners:
-            owner.sheltered = True
+            owner.fulfill_need(Shelter())
 
         for resident in self.residents_at_location:
             residents_to_delete.append(resident)
             resident.location = None
-            resident.sheltered = True
+            resident.fulfill_need(Shelter())
 
         for resident in residents_to_delete:
             del self.residents_at_location[resident]

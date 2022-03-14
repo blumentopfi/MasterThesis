@@ -1,5 +1,5 @@
-from abc import abstractmethod, ABC
-from random import random, choice
+from abc import abstractmethod
+from random import choice
 
 from agent.point_of_interest import PointOfInterest
 
